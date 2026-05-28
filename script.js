@@ -1,53 +1,53 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const startScreen = document.getElementById('start-screen');
+    const startBtn = document.getElementById('start-btn');
     const logo = document.getElementById('crazy-logo');
     const videos = document.querySelectorAll('video');
 
-    // --- LOGICA LOGO LSD ---
+    // Sblocca i video al click (Risolve il problema del "non si vede nulla")
+    startBtn.addEventListener('click', () => {
+        videos.forEach(v => {
+            v.play().catch(e => console.error("Errore autoplay:", e));
+        });
+        startScreen.style.display = 'none';
+        viaggioLogo(); // Fai partire il logo solo dopo lo start
+    });
+
+    // --- LOGICA LOGO ---
     function viaggioLogo() {
+        // Coordinate grezze
         const x = Math.random() * 80 + 10; 
         const y = Math.random() * 80 + 10; 
-
-        const scale = Math.random() * 2.5 + 0.2; 
-        const rotate = Math.random() * 720 - 360;
-        const skewX = Math.random() * 60 - 30;
-        const skewY = Math.random() * 60 - 30;
-
-        const hue = Math.random() * 360;
-        const invert = Math.random() > 0.85 ? 1 : 0; 
-        const blur = Math.random() > 0.9 ? Math.random() * 15 : 0; 
-        const opacity = Math.random() > 0.2 ? (Math.random() * 0.7 + 0.3) : 0; 
-
-        const isExploding = Math.random() > 0.95; 
         
-        if (isExploding) {
-            logo.style.transform = `translate(-50%, -50%) scale(8) rotate(${rotate * 2}deg)`;
-            logo.style.filter = `blur(20px) brightness(5) invert(1)`;
+        // Deformazioni
+        const scale = Math.random() * 2 + 0.5; 
+        const skewX = Math.random() * 40 - 20;
+
+        // Effetti visivi brutalisti (niente sfocature CSS che appesantiscono)
+        const invert = Math.random() > 0.8 ? 'invert(1)' : 'invert(0)';
+        const hue = `hue-rotate(${Math.floor(Math.random() * 360)}deg)`;
+        
+        // Sparizione improvvisa (flicker)
+        const isVisible = Math.random() > 0.15; // L'85% del tempo è visibile
+
+        if (!isVisible) {
             logo.style.opacity = '0';
         } else {
+            logo.style.opacity = '1';
             logo.style.left = `${x}vw`;
             logo.style.top = `${y}vh`;
-            logo.style.transform = `translate(-50%, -50%) scale(${scale}) rotate(${rotate}deg) skew(${skewX}deg, ${skewY}deg)`;
-            logo.style.filter = `hue-rotate(${hue}deg) invert(${invert}) blur(${blur}px) drop-shadow(5px 5px 0px #ff00ff) drop-shadow(-5px -5px 0px #00ffff)`;
-            logo.style.opacity = opacity;
+            logo.style.transform = `translate(-50%, -50%) scale(${scale}) skewX(${skewX}deg)`;
+            logo.style.filter = `${invert} ${hue} contrast(200%)`;
         }
 
-        const nextTick = isExploding ? 800 : Math.random() * 600 + 50;
-        setTimeout(viaggioLogo, nextTick);
+        // Ritmo nevrotico
+        setTimeout(viaggioLogo, Math.random() * 400 + 100);
     }
 
-    viaggioLogo();
-
-    // --- LOGICA ALTERAZIONE VIDEO ---
+    // --- ALTERAZIONE VELOCITÀ VIDEO ---
     setInterval(() => {
         const randomVideo = videos[Math.floor(Math.random() * videos.length)];
-        
-        // Altera la velocità dei video per effetto trip
-        randomVideo.playbackRate = Math.random() * 2.8 + 0.2; 
-        
-        // Micro-stuttering (il video si freeza per un istante)
-        if(Math.random() > 0.8) {
-            randomVideo.pause();
-            setTimeout(() => randomVideo.play(), Math.random() * 200 + 50);
-        }
-    }, 1500);
+        // Va da rallentato (0.5) a super veloce (2.5)
+        randomVideo.playbackRate = Math.random() * 2 + 0.5; 
+    }, 2000);
 });
